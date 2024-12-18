@@ -9,7 +9,9 @@ import by.ruslan.radevich.model.Person;
 import by.ruslan.radevich.model.Student;
 import by.ruslan.radevich.util.Util;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Main {
 
@@ -17,35 +19,55 @@ public class Main {
         task1();
         task2();
         task3();
-        task4();
-        task5();
-        task6();
-        task7();
-        task8();
-        task9();
-        task10();
-        task11();
-        task12();
-        task13();
-        task14();
-        task15();
-        task16();
-        task17();
-        task18();
-        task19();
-        task20();
-        task21();
-        task22();
+//        task4();
+//        task5();
+//        task6();
+//        task7();
+//        task8();
+//        task9();
+//        task10();
+//        task11();
+//        task12();
+//        task13();
+//        task14();
+//        task15();
+//        task16();
+//        task17();
+//        task18();
+//        task19();
+//        task20();
+//        task21();
+//        task22();
     }
 
     public static void task1() {
+
+        int zooIndex = 3;
+        int startIndex = zooIndex * 7;
+
         List<Animal> animals = Util.getAnimals();
-//        animals.stream() Продолжить ...
+        animals.stream()
+                .filter(animal -> animal.getAge() >= 10 && animal.getAge() <= 20)
+                .sorted(Comparator.comparingInt(Animal::getAge))
+                .collect(Collectors.toList());
+
+
+        List<Animal> animalsInThirdZoo = animals.stream()
+                .skip(startIndex)
+                .limit(7)
+                .toList();
+
+        System.out.println("Animals in the third zoo:");
+        animalsInThirdZoo.forEach(System.out::println);
     }
+
 
     public static void task2() {
         List<Animal> animals = Util.getAnimals();
-//        animals.stream() Продолжить ...
+        animals.stream()
+                .filter(animal -> "Japanese".equals(animal.getOrigin()) && "Female".equals(animal.getGender()))
+                .map(animal -> animal.getBread().toUpperCase())
+                .forEach(System.out::println);
     }
 
     public static void task3() {
