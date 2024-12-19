@@ -11,14 +11,15 @@ import by.ruslan.radevich.util.Util;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class Main {
 
     public static void main(String[] args) {
-        task1();
-        task2();
-        task3();
+//        task1();
+//        task2();
+//        task3();
 //        task4();
 //        task5();
 //        task6();
@@ -26,7 +27,7 @@ public class Main {
 //        task8();
 //        task9();
 //        task10();
-//        task11();
+        task11();
 //        task12();
 //        task13();
 //        task14();
@@ -70,51 +71,103 @@ public class Main {
                 .forEach(System.out::println);
     }
 
+    //Отобрать всех животных старше 30 лет и вывести все страны происхождения без дубликатов начинающиеся на "A"
     public static void task3() {
         List<Animal> animals = Util.getAnimals();
-//        animals.stream() Продолжить ...
+        animals.stream()
+                .filter(animal -> animal.getAge() > 30)
+                .map(Animal::getOrigin)
+                .filter(animal -> animal.startsWith("A"))
+                .distinct()
+                .forEach(animal -> System.out.println("task3: " + animal));
+
     }
 
+    //    Подсчитать количество всех животных пола = Female. Вывести в консоль
     public static void task4() {
         List<Animal> animals = Util.getAnimals();
-//        animals.stream() Продолжить ...
+        long female = animals.stream()
+                .filter(animal -> animal.getGender().equals("Female"))
+                .count();
+        System.out.print("Task4 " + female + " animals");
+
     }
 
+    //    Взять всех животных возрастом 20 - 30 лет. Есть ли среди нах хоть один из страны Венгрия (Hungarian)? Ответ вывести в консоль
     public static void task5() {
         List<Animal> animals = Util.getAnimals();
-//        animals.stream() Продолжить ...
+        animals.stream()
+                .filter(animal -> animal.getAge() >= 20 && animal
+                        .getAge() <= 30 && animal.getOrigin().equals("Hungarian"))
+                .forEach(animal -> System.out.println("Task5: " + animal));
     }
 
+    //    Взять всех животных. Все ли они пола Male и Female ? Ответ вывести в консоль
     public static void task6() {
         List<Animal> animals = Util.getAnimals();
-//        animals.stream() Продолжить ...
+        boolean allHaveValidGender = animals.stream()
+                .allMatch(animal -> animal.getOrigin().equals("Male") || animal.getOrigin().equals("Female"));
+        System.out.println("Task6 " + allHaveValidGender);
+
     }
 
+    //    Взять всех животных. Узнать что ни одно из них не имеет страну происхождения Oceania. Ответ вывести в консоль
     public static void task7() {
         List<Animal> animals = Util.getAnimals();
-//        animals.stream() Продолжить ...
+        boolean anyMatchOriginOceania = animals.stream()
+                .anyMatch(animal -> animal.getOrigin().equals("Oceania"));
+        System.out.println("Task7 " + anyMatchOriginOceania);
+        if (anyMatchOriginOceania) {
+            System.out.println("Task7" + " oceania");
+        } else {
+            System.out.println("Task7" + " No oceania");
+        }
     }
 
+    //    Взять всех животных. Отсортировать их породу в стандартном порядке и взять первые 100. Вывести в консоль возраст самого старого животного
     public static void task8() {
         List<Animal> animals = Util.getAnimals();
-//        animals.stream() Продолжить ...
+        animals.stream()
+                .sorted(Comparator.comparing(Animal::getBread))
+                .limit(100)
+                .max(Comparator.comparing(Animal::getAge))
+                .ifPresent(animal -> System.out.println("Task8 " + animal.getAge()));
     }
-
+//    Взять всех животных. Преобразовать их в породы, а породы в []char Вывести в консоль длину самого короткого массива
     public static void task9() {
         List<Animal> animals = Util.getAnimals();
-//        animals.stream() Продолжить ...
-    }
+        animals.stream()
+                .map(Animal::getBread)
+                .map(String::toCharArray)
+                .mapToInt(animal-> animal.length)
+                .min()
+                .ifPresent(lengthAnimal -> System.out.println("Task9 " + lengthAnimal));
 
+    }
+//    Взять всех животных. Подсчитать суммарный возраст всех животных. Вывести результат в консоль
     public static void task10() {
         List<Animal> animals = Util.getAnimals();
-//        animals.stream() Продолжить ...
-    }
+        animals.stream()
+                .mapToInt(Animal::getAge)
+                .reduce(Integer::sum)
+                .ifPresent(sum-> System.out.println("Task10 "+ sum));
 
+    }
+//    Взять всех животных. Подсчитать средний возраст всех животных из индонезии (Indonesian).
+//    Вывести результат в консоль
     public static void task11() {
         List<Animal> animals = Util.getAnimals();
-//        animals.stream() Продолжить ...
+        animals.stream()
+                .filter(animal -> animal.getOrigin().equals("Indonesian"))
+                .mapToDouble(Animal::getAge)
+                .average()
+                .ifPresent(animal-> System.out.println("Task11 "+ animal + " average age animals from Indonesian"));
     }
-
+//    Во Французский легион принимают людей со всего света, но есть отбор по полу (только мужчины) возраст от 18 до 27 лет.
+//    Преимущество отдаётся людям военной категории 1, на втором месте - военная категория 2,
+//    и на третьем месте военная категория 3.
+//    Отсортировать всех подходящих кандидатов в порядке их приоритета по военной категории.
+//    Однако взять на обучение академия может только 200 человек. Вывести их в консоль.
     public static void task12() {
         List<Person> persons = Util.getPersons();
 //        persons.stream() Продолжить ...
