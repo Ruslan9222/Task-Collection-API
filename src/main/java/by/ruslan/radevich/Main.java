@@ -9,6 +9,8 @@ import by.ruslan.radevich.model.Person;
 import by.ruslan.radevich.model.Student;
 import by.ruslan.radevich.util.Util;
 
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
@@ -27,8 +29,8 @@ public class Main {
 //        task8();
 //        task9();
 //        task10();
-        task11();
-//        task12();
+//        task11();
+        task12();
 //        task13();
 //        task14();
 //        task15();
@@ -170,9 +172,23 @@ public class Main {
 //    Однако взять на обучение академия может только 200 человек. Вывести их в консоль.
     public static void task12() {
         List<Person> persons = Util.getPersons();
-//        persons.stream() Продолжить ...
+        persons.stream()
+                .filter(person -> person.getGender().equals("Male"))
+                .filter(Main::filterForAge)
+                .sorted(Comparator.comparingInt(Person::getRecruitmentGroup))
+                .limit(200)
+                .forEach(person -> System.out.println("Task12 "+ person));
     }
 
+    private static boolean filterForAge(Person person) {
+        LocalDate dateOfBirth = person.getDateOfBirth();
+        int ageOfPerson = Period.between(dateOfBirth, LocalDate.now()).getYears();
+        return ageOfPerson >= 18 && ageOfPerson <= 27;
+    }
+//    Надвигается цунами и в районе эвакуации требуется в первую очередь обойти дома и эвакуировать больных и раненых (из Hospital),
+//    во вторую очередь детей и стариков (до 18 и пенсионного возраста) а после всех остальных.
+//    В первый этап эвакуации мест в эвакуационном транспорте только 500.
+//    Вывести всех людей попадающих в первый этап эвакуации в порядке приоритета (в консоль).
     public static void task13() {
         List<House> houses = Util.getHouses();
 //        houses.stream() Продолжить ...
