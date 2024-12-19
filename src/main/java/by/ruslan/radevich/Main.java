@@ -13,8 +13,8 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.util.Comparator;
 import java.util.List;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
 
 public class Main {
 
@@ -30,8 +30,8 @@ public class Main {
 //        task9();
 //        task10();
 //        task11();
-        task12();
-//        task13();
+//        task12();
+        task13();
 //        task14();
 //        task15();
 //        task16();
@@ -135,27 +135,30 @@ public class Main {
                 .max(Comparator.comparing(Animal::getAge))
                 .ifPresent(animal -> System.out.println("Task8 " + animal.getAge()));
     }
-//    Взять всех животных. Преобразовать их в породы, а породы в []char Вывести в консоль длину самого короткого массива
+
+    //    Взять всех животных. Преобразовать их в породы, а породы в []char Вывести в консоль длину самого короткого массива
     public static void task9() {
         List<Animal> animals = Util.getAnimals();
         animals.stream()
                 .map(Animal::getBread)
                 .map(String::toCharArray)
-                .mapToInt(animal-> animal.length)
+                .mapToInt(animal -> animal.length)
                 .min()
                 .ifPresent(lengthAnimal -> System.out.println("Task9 " + lengthAnimal));
 
     }
-//    Взять всех животных. Подсчитать суммарный возраст всех животных. Вывести результат в консоль
+
+    //    Взять всех животных. Подсчитать суммарный возраст всех животных. Вывести результат в консоль
     public static void task10() {
         List<Animal> animals = Util.getAnimals();
         animals.stream()
                 .mapToInt(Animal::getAge)
                 .reduce(Integer::sum)
-                .ifPresent(sum-> System.out.println("Task10 "+ sum));
+                .ifPresent(sum -> System.out.println("Task10 " + sum));
 
     }
-//    Взять всех животных. Подсчитать средний возраст всех животных из индонезии (Indonesian).
+
+    //    Взять всех животных. Подсчитать средний возраст всех животных из индонезии (Indonesian).
 //    Вывести результат в консоль
     public static void task11() {
         List<Animal> animals = Util.getAnimals();
@@ -163,9 +166,10 @@ public class Main {
                 .filter(animal -> animal.getOrigin().equals("Indonesian"))
                 .mapToDouble(Animal::getAge)
                 .average()
-                .ifPresent(animal-> System.out.println("Task11 "+ animal + " average age animals from Indonesian"));
+                .ifPresent(animal -> System.out.println("Task11 " + animal + " average age animals from Indonesian"));
     }
-//    Во Французский легион принимают людей со всего света, но есть отбор по полу (только мужчины) возраст от 18 до 27 лет.
+
+    //    Во Французский легион принимают людей со всего света, но есть отбор по полу (только мужчины) возраст от 18 до 27 лет.
 //    Преимущество отдаётся людям военной категории 1, на втором месте - военная категория 2,
 //    и на третьем месте военная категория 3.
 //    Отсортировать всех подходящих кандидатов в порядке их приоритета по военной категории.
@@ -174,25 +178,49 @@ public class Main {
         List<Person> persons = Util.getPersons();
         persons.stream()
                 .filter(person -> person.getGender().equals("Male"))
-                .filter(Main::filterForAge)
+                .filter(Main::filterForAgePerson)
                 .sorted(Comparator.comparingInt(Person::getRecruitmentGroup))
                 .limit(200)
-                .forEach(person -> System.out.println("Task12 "+ person));
+                .forEach(person -> System.out.println("Task12 " + person));
     }
 
-    private static boolean filterForAge(Person person) {
+    private static boolean filterForAgePerson(Person person) {
         LocalDate dateOfBirth = person.getDateOfBirth();
         int ageOfPerson = Period.between(dateOfBirth, LocalDate.now()).getYears();
         return ageOfPerson >= 18 && ageOfPerson <= 27;
     }
-//    Надвигается цунами и в районе эвакуации требуется в первую очередь обойти дома и эвакуировать больных и раненых (из Hospital),
+
+    //    Надвигается цунами и в районе эвакуации требуется в первую очередь обойти дома и эвакуировать больных и раненых (из Hospital),
 //    во вторую очередь детей и стариков (до 18 и пенсионного возраста) а после всех остальных.
 //    В первый этап эвакуации мест в эвакуационном транспорте только 500.
 //    Вывести всех людей попадающих в первый этап эвакуации в порядке приоритета (в консоль).
     public static void task13() {
         List<House> houses = Util.getHouses();
-//        houses.stream() Продолжить ...
+        List<Person> evacuees = houses.stream()
+                .flatMap(house -> house.getPersonList().stream())
+                .sorted((p1, p2) -> {
+                    if ("Hospital".equals(p1.getOccupation()) && !"Hospital".equals(p2.getOccupation())) {
+                        return -1;
+                    } else if (!"Hospital".equals(p1.getOccupation()) && "Hospital".equals(p2.getOccupation())) {
+                        return 1;
+                    } else if ((filterForAge(p1) < 18 || filterForAge(p1) >= 65) && !(filterForAge(p2) < 18 || filterForAge(p2) >= 65)) {
+                        return -1;
+                    } else if (!(filterForAge(p1) < 18 || filterForAge(p1) >= 65) && (filterForAge(p2) < 18 || filterForAge(p2) >= 65)) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                })
+                .limit(500)
+                .toList();
+
+        evacuees.forEach(person -> System.out.println("task13: " + person));
     }
+
+    private static int filterForAge(Person person) {
+        return Period.between(person.getDateOfBirth(), LocalDate.now()).getYears();
+    }
+
 
     public static void task14() {
         List<Car> cars = Util.getCars();
